@@ -25,6 +25,7 @@ var (
 	flag_vtk         = flag.String("vtk", "", `"ascii" or "binary" VTK output`)
 	flag_min         = flag.String("min", "auto", `Minimum of color scale: "auto" or value.`)
 	flag_max         = flag.String("max", "auto", `Maximum of color scale: "auto" or value.`)
+	flag_normalize   = flag.Bool("normalize", false, `Normalize vector data to unit length`)
 )
 
 const (
@@ -68,6 +69,8 @@ func read(in io.Reader, name string) {
 }
 
 func process(f *dump.Frame, name string) {
+	preprocess(f)
+
 	haveOutput := false
 
 	if *flag_jpeg {
@@ -109,4 +112,10 @@ func process(f *dump.Frame, name string) {
 func noExt(file string) string {
 	ext := path.Ext(file)
 	return file[:len(file)-len(ext)]
+}
+
+func preprocess(f *dump.Frame) {
+	if *flag_normalize {
+		normalize(f)
+	}
 }
